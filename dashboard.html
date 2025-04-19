@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Camera Feed</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3f3f3;
+      padding: 20px;
+    }
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .image-grid img {
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <h1>Live Camera Feed</h1>
+  <div class="image-grid" id="imageGrid"></div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDrWl7mPHjx0kOVPi2KrItG5Ag5q7BncO8",
+      authDomain: "apple-verification-ad80e.firebaseapp.com",
+      projectId: "apple-verification-ad80e",
+      storageBucket: "apple-verification-ad80e.firebasestorage.app",
+      messagingSenderId: "137954857845",
+      appId: "1:137954857845:web:072c0eb17ab3f59b22b93c"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const imageGrid = document.getElementById('imageGrid');
+
+    db.collection("images").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+      imageGrid.innerHTML = "";
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const img = document.createElement("img");
+        img.src = data.imageData;
+        imageGrid.appendChild(img);
+      });
+    });
+  </script>
+</body>
+</html>
